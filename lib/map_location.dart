@@ -1,18 +1,26 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:imei_plugin/imei_plugin.dart';
+import 'package:common_utils/common_utils.dart';
+import 'info_config.dart';
+import 'package:dio/dio.dart';
 
-import 'placeholder_widget.dart';
-
-class CurrentLocationWidget extends StatefulWidget {
+class MapLocation extends StatefulWidget{
   @override
-  _LocationState createState() => _LocationState();
+  State<MapLocation> createState() => new _MapLocation();
+  
 }
 
-class _LocationState extends State<CurrentLocationWidget> {
-  Position _position;
-  String _platformIMEI;
+class _MapLocation extends State<MapLocation>{
+
+  var _lng,_lat,_timestamp;
+  String _idfv;
+  TimerUtil timerUtil;
+
+  Response response;
+  Dio dio = new Dio();
 
   @override
   void initState() {
@@ -20,13 +28,55 @@ class _LocationState extends State<CurrentLocationWidget> {
     _initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> _initPlatformState() async {
-    Position position;
-    String platformImei;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    String idfv;
     try {
-      platformImei = await ImeiPlugin.getImei;
+      idfv = await ImeiPlugin.getImei;
+    } on PlatformException {
+      idfv = "cannot get idfv/imei";
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _idfv = idfv;
+    });
+  }
+
+  void refreshLocation(){
+    
+    //定时任务test
+    timerUtil = new TimerUtil();
+    timerUtil.setInterval(1000);
+    timerUtil.setOnTimerTickCallback((int value) {
+      getLocation();
+      LogUtil.e("TimerTick: " + value.toString());
+    });
+    timerUtil.startTimer();
+  }
+  
+  void stopRefreshLocation(){
+    timerUtil.cancel();
+    sendLocation();
+  }
+
+  void sendLocation () async{
+    response = await dio.get(InfoConfig.SERVER_ADDRESS+"/session");
+    print(response.data);
+  }
+
+  @override
+  void dispose() {
+    timerUtil.cancel();
+    super.dispose();
+  }
+  
+  void getLocation() async{
+
+    Position position;
+    try {
       final Geolocator geolocator = Geolocator()
         ..forceAndroidLocationManager = true;
       position = await geolocator.getCurrentPosition(
@@ -35,40 +85,39 @@ class _LocationState extends State<CurrentLocationWidget> {
       position = null;
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) {
       return;
     }
-
     setState(() {
-      _platformIMEI = platformImei;
-      _position = position;
+      _lng=position.longitude;
+      _lat=position.latitude;
+      _timestamp = position.timestamp.toLocal().millisecondsSinceEpoch.toString().substring(0,10);
     });
-  }
 
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<GeolocationStatus>(
-        future: Geolocator().checkGeolocationPermissionStatus(),
-        builder:
-            (BuildContext context, AsyncSnapshot<GeolocationStatus> snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.data == GeolocationStatus.disabled) {
-            return const PlaceholderWidget('Location services disabled',
-                'Enable location services for this App using the device settings.');
-          }
-
-          if (snapshot.data == GeolocationStatus.denied) {
-            return const PlaceholderWidget('Access to location denied',
-                'Allow access to the location services for this App using the device settings.');
-          }
-
-          return PlaceholderWidget('IMEI:$_platformIMEI Current location:', _position.toString());
-        });
+    // TODO: implement build
+    return new Scaffold(
+      body: new Center(
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text("nihao"),
+            new Text("wohaixing$_idfv"),
+            new Text("lng: $_lng, lat: $_lat"),
+            new Text("time:$_timestamp"),
+            new RaisedButton(onPressed: refreshLocation,
+            color: Colors.blue,
+            child: new Text("get location"),),
+            new RaisedButton(onPressed: stopRefreshLocation,
+            color: Colors.red,
+            child: new Text("stop refresh"),)
+          ],
+        ),
+      ),
+    );
   }
 }
