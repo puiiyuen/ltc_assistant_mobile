@@ -46,20 +46,25 @@ class _MapLocation extends State<MapLocation>{
   }
 
   void refreshLocation(){
-    
+    int count = 0;
     //定时任务test
     timerUtil = new TimerUtil();
     timerUtil.setInterval(1000);
     timerUtil.setOnTimerTickCallback((int value) {
       getLocation();
-      LogUtil.e("TimerTick: " + value.toString());
+      count++;
+      LogUtil.e("TimerTick: " + value.toString()+" count: "+ count.toString());
+      // add send location
+      if (count == 3){
+        sendLocation();
+        count = 0;
+      }
     });
     timerUtil.startTimer();
   }
   
   void stopRefreshLocation(){
     timerUtil.cancel();
-    sendLocation();
   }
 
   void sendLocation () async{
@@ -99,7 +104,6 @@ class _MapLocation extends State<MapLocation>{
   
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return new Scaffold(
       body: new Center(
         child: new Column(
