@@ -6,7 +6,13 @@ PODS:
     - Flutter
   - imei_plugin (0.0.1):
     - Flutter
+  - path_provider (0.0.1):
+    - Flutter
   - permission_handler (3.0.0):
+    - Flutter
+  - shared_preferences (0.0.1):
+    - Flutter
+  - webview_flutter (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -14,7 +20,10 @@ DEPENDENCIES:
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
   - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
   - imei_plugin (from `.symlinks/plugins/imei_plugin/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
@@ -25,15 +34,24 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_api_availability/ios"
   imei_plugin:
     :path: ".symlinks/plugins/imei_plugin/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
+  shared_preferences:
+    :path: ".symlinks/plugins/shared_preferences/ios"
+  webview_flutter:
+    :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   geolocator: e054ad14f577d282c418eb5e32c5f0a8a5e6c69d
   google_api_availability: 80c105ad2c0ed01c18cf779653da2cb939518192
   imei_plugin: fe04ea91109ef43449c0cda4bba33707cab499b4
+  path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
   permission_handler: 03dcf3ade9d5f398b8854b366cb9de718d3daa76
+  shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
+  webview_flutter: 9bd234c07e99632356cba112df56fd1d47d6b6e3
 
 PODFILE CHECKSUM: e4cad831381adb733d23eb6b711ef71eb24aeb3a
 

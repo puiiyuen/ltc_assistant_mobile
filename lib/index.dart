@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:ltc_assistant/utils/map_location.dart';
+import 'package:ltc_assistant/login/login.dart';
 
 class Index extends StatefulWidget {
   @override
@@ -8,16 +10,26 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> {
   PageView _topBoard;
+  var _banner1 = 'images/banner-1.jpg';
+  var _banner2 = 'images/banner-2.jpg';
+  var _banner3 = 'images/banner-3.jpg';
+  MapLocation mapLocation = new MapLocation();
 
   @override
   void initState() {
     super.initState();
 
+
     _topBoard =
         new PageView(scrollDirection: Axis.horizontal, children: <Widget>[
       new GestureDetector(
         child: Container(
-          color: Colors.blue,
+          decoration: new BoxDecoration(
+            color: Colors.blue,
+          image: DecorationImage(
+              image: new ExactAssetImage(_banner1),
+              fit: BoxFit.cover),
+          ),
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -28,20 +40,45 @@ class _IndexState extends State<Index> {
             ],
           ),
         ),
+        onTap: (){
+          Navigator.push(context,
+              new MaterialPageRoute(builder: (context) {
+                return new Login();
+              }));
+        },
       ),
       new GestureDetector(
         child: Container(
-          color: Colors.yellow,
+          decoration: new BoxDecoration(
+            color: Colors.blue,
+            image: DecorationImage(
+                image: new ExactAssetImage(_banner2),
+                fit: BoxFit.cover)
+          ),
         ),
       ),
       new GestureDetector(
         child: Container(
-          color: Colors.green,
+          decoration: new BoxDecoration(
+            color:Colors.blue,
+            image: DecorationImage(
+                image: new ExactAssetImage(_banner3),
+                fit: BoxFit.cover)
+          ),
         ),
       )
     ]);
+
+//    mapLocation.refreshLocation();
+//    Navigator.of(context).pushAndRemoveUntil(
+//        MaterialPageRoute(builder: (context) => Login()),
+//            (route) => route==null
+//    );
+
+
   }
-  
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +273,8 @@ class _IndexState extends State<Index> {
                         ),
                       ),
                     )
-                  ],),
+                  ],
+                ),
               )
             ],
           )

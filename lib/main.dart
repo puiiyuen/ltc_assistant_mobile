@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'map_location.dart';
 import 'index.dart';
 
-void main() => runApp(MyApp());
+void main(){
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
 
