@@ -18,7 +18,7 @@ class LoginService {
   LoginService() {
     this.getPath().then((onValue) {
       path = onValue + '/cookies';
-      cookieJar = new PersistCookieJar(dir: path);
+      cookieJar = new PersistCookieJar(dir: path,ignoreExpires: true);
       dio.interceptors.add(CookieManager(cookieJar));
     });
   }
@@ -34,6 +34,9 @@ class LoginService {
     Response response;
     response =
     await dio.post(InfoConfig.SERVER_ADDRESS + '/login', data: postData);
+    List<Cookie> results = cookieJar.loadForRequest(Uri.parse(InfoConfig.SERVER_ADDRESS));
+    print('login');
+    print(results);
     if (response.data == OperationStatus.SUCCESSFUL) {
       return OperationStatus.SUCCESSFUL;
     } else {

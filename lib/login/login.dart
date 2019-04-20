@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'login_service.dart';
 import '../utils/opertaion_status.dart';
-import '../utils/session.dart';
+import '../activate/activate.dart';
 
 class Login extends StatefulWidget{
 
@@ -20,7 +20,6 @@ class _LoginState extends State<Login> {
   Color _eyeColor;
   bool _showLoading = false;
   LoginService loginService = new LoginService();
-  Session session = new Session();
 
   Padding buildTitle(){
     return Padding(
@@ -96,6 +95,7 @@ class _LoginState extends State<Login> {
            loginService.login(_loginId, _password).then((onValue) {
              if (onValue == OperationStatus.SUCCESSFUL){
                print('登陆成功');
+               Navigator.pop(context,OperationStatus.SUCCESSFUL);
              } else {
                print('登陆失败');
              }
@@ -123,9 +123,8 @@ class _LoginState extends State<Login> {
             color: Colors.redAccent,
             shape: StadiumBorder(),
             onPressed: () {
-              session.isOnline().then((onValue) {
-                print(onValue);
-              });
+              Navigator.push(context,
+              new MaterialPageRoute(builder: (context) => new Activate()),);
             }
         ),
       ),

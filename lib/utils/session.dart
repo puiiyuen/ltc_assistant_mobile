@@ -19,7 +19,7 @@ class Session {
   Session() {
     this.getPath().then((onValue) {
       path = onValue + '/cookies';
-      cookieJar = new PersistCookieJar(dir: path);
+      cookieJar = new PersistCookieJar(dir: path,ignoreExpires: true);
       dio.interceptors.add(CookieManager(cookieJar));
     });
   }
