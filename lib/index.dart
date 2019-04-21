@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 
@@ -6,7 +5,6 @@ import 'package:ltc_assistant/utils/map_location.dart';
 import 'package:ltc_assistant/login/login.dart';
 import 'utils/session.dart';
 import 'utils/opertaion_status.dart';
-import 'utils/info_config.dart';
 
 import 'health_report/health_report.dart';
 import 'bill/bill.dart';
@@ -165,10 +163,30 @@ class _IndexState extends State<Index> {
                 ],
               ),
             ),
-            onTap: () {
-              Navigator.push(context,
-              new MaterialPageRoute(
-                  builder: (context) => new Memo()));
+            onTap: () async{
+              int onlineStatus;
+              int loginStatus=-1;
+              await session.isOnline().then((onValue){
+                onlineStatus = onValue;
+              });
+              if(onlineStatus == OperationStatus.IS_EXIST){
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Memo()));
+              } else if (onlineStatus == OperationStatus.NOT_EXIST) {
+                await Navigator.push(context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Login())).then((onValue){
+                  loginStatus = onValue;
+                });
+                if  (loginStatus == OperationStatus.SUCCESSFUL){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => new Memo()));
+                }
+              }
             },
           ),
           new GestureDetector(

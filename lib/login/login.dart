@@ -16,6 +16,7 @@ class _LoginState extends State<Login> {
   final _formKey = new GlobalKey<FormState>();
   String _loginId;
   String _password;
+  String _loginStatus='登录中';
   bool _isObscure = true;
   Color _eyeColor;
   bool _showLoading = false;
@@ -64,6 +65,11 @@ class _LoginState extends State<Login> {
                       : Theme.of(context).iconTheme.color;
                 });
               })),
+      validator: (inputPassword) {
+        if(inputPassword.isEmpty){
+          return '请输入密码';
+        }
+      },
     );
   }
 
@@ -72,6 +78,18 @@ class _LoginState extends State<Login> {
       decoration: InputDecoration(
         labelText: 'ID/手机号码/邮箱',
       ),
+      validator: (idValue) {
+        var phoneReg = RegExp("^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}\$");
+        var emailReg = RegExp("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$");
+        var ltcIdReg = RegExp("^\\d{10}\$");
+        if(idValue.isEmpty){
+          return '请输入ID/手机号码/邮箱';
+        } else {
+          if (!phoneReg.hasMatch(idValue)&&!emailReg.hasMatch(idValue)&&!ltcIdReg.hasMatch(idValue)){
+            return '请检查输入格式是否正确';
+          }
+        }
+      },
       onSaved: (String value) => _loginId = value,
     );
   }
@@ -88,21 +106,39 @@ class _LoginState extends State<Login> {
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
-            _formKey.currentState.save();
-            setState(() {
-              _showLoading = true;
-            });
-           loginService.login(_loginId, _password).then((onValue) {
-             if (onValue == OperationStatus.SUCCESSFUL){
-               print('登陆成功');
-               Navigator.pop(context,OperationStatus.SUCCESSFUL);
-             } else {
-               print('登陆失败');
-             }
-             setState(() {
-               _showLoading = false;
-             });
-           });
+            if(_formKey.currentState.validate()){
+              _formKey.currentState.save();
+              setState(() {
+                _loginStatus = '登录中...';
+                _showLoading = true;
+              });
+              loginService.login(_loginId, _password).then((onValue) {
+                if (onValue == OperationStatus.SUCCESSFUL){
+                  print('登陆成功');
+                  Navigator.pop(context,OperationStatus.SUCCESSFUL);
+                  setState(() {
+                    _showLoading = false;
+                  });
+                } else if(onValue == OperationStatus.INACTIVATED){
+                  Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new Activate())
+                  );
+                  setState(() {
+                    _showLoading = false;
+                  });
+                } else {
+                  setState(() {
+                    _loginStatus = '登陆失败\n请重试';
+                  });
+                  Future.delayed(Duration(seconds: 3),(){
+                    print('登陆失败');
+                    setState(() {
+                      _showLoading = false;
+                    });
+                  });
+                }
+              });
+            }
           },
           shape: StadiumBorder(),
         ),
@@ -176,7 +212,7 @@ class _LoginState extends State<Login> {
                     color: Colors.blue,
                     size: 50.0,
                   ),
-                  Text('登录中...',
+                  Text(_loginStatus,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
