@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:ltc_assistant/utils/map_location.dart';
 import 'package:ltc_assistant/login/login.dart';
@@ -23,9 +23,11 @@ class _IndexState extends State<Index> {
   var _banner2 = 'images/banner-2.jpg';
   var _banner3 = 'images/banner-3.jpg';
 
+  bool locationStart=false;
+  SharedPreferences db;
+
   Session session = new Session();
   MapLocation mapLocation = new MapLocation();
-
 
   PageView notice(){
     return new PageView(scrollDirection: Axis.horizontal, children: <Widget>[
@@ -374,18 +376,26 @@ class _IndexState extends State<Index> {
         title: "智慧助手",
         home: new Scaffold(
             appBar: AppBar(title: new Text("智慧助手")),
-            body: new CustomScrollView(
-              slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    new AspectRatio(aspectRatio: 1.8,
-                      child: new Container(
-                        child: notice(),
-                      ),)
-                  ]),
-                ),
-                indexMenu()
-              ],
+            body: new GestureDetector(
+              child:  new CustomScrollView(
+                slivers: <Widget>[
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      new AspectRatio(aspectRatio: 1.8,
+                        child: new Container(
+                          child: notice(),
+                        ),)
+                    ]),
+                  ),
+                  indexMenu()
+                ],
+              ),
+              onHorizontalDragCancel: (){
+                if (!locationStart){
+                  locationStart = true;
+                  mapLocation.locationReport();
+                }
+              },
             )
         )
     );

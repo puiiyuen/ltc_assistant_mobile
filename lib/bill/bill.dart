@@ -7,8 +7,10 @@ class Bill extends StatefulWidget{
 }
 
 class _BillState extends State<Bill>{
+
   @override
   Widget build(BuildContext context) {
+
     return new Scaffold(
       appBar: AppBar(title: new Text('个人账单'),),
     );
