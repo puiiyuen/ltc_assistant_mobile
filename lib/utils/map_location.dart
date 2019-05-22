@@ -120,7 +120,7 @@ class MapLocation {
     }
   }
 
-  void setLocation() async {
+  Future<Position> setLocation() async {
     try {
       final Geolocator geolocator = Geolocator()
         ..forceAndroidLocationManager = true;
@@ -129,6 +129,7 @@ class MapLocation {
     } on PlatformException {
       _position = null;
     }
+    return _position;
   }
 
 }

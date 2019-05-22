@@ -35,17 +35,22 @@ class LoginService {
   Future<int> login(String loginId, String password) async {
     LoginInfo loginInfo = new LoginInfo(loginId, password,'APP');
     String postData = json.encode(loginInfo);
-    Response response;
-    Response user;
-    response =
-    await dio.post(InfoConfig.SERVER_ADDRESS + '/login', data: postData);
-    if (response.data == OperationStatus.SUCCESSFUL) {
-      db = await SharedPreferences.getInstance();
-      user = await dio.get(InfoConfig.SERVER_ADDRESS+'/user');
-      db.setInt('userId', user.data['userId']);
-      return OperationStatus.SUCCESSFUL;
-    } else {
-      return response.data;
+    try {
+      Response response;
+      Response user;
+      response =
+      await dio.post(InfoConfig.SERVER_ADDRESS + '/login', data: postData);
+      if (response.data == OperationStatus.SUCCESSFUL) {
+        db = await SharedPreferences.getInstance();
+        user = await dio.get(InfoConfig.SERVER_ADDRESS+'/user');
+        db.setInt('userId', user.data['userId']);
+        db.setString('userType', user.data['userType']);
+        return OperationStatus.SUCCESSFUL;
+      } else {
+        return response.data;
+      }
+    }catch(e){
+      return OperationStatus.FAILED;
     }
   }
 }

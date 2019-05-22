@@ -21,6 +21,7 @@ class _LoginState extends State<Login> {
   Color _eyeColor;
   bool _showLoading = false;
   LoginService loginService = new LoginService();
+  String promptWords='';
 
   Padding buildTitle(){
     return Padding(
@@ -52,6 +53,7 @@ class _LoginState extends State<Login> {
       obscureText: _isObscure,
       decoration: InputDecoration(
           labelText: '密码',
+//          labelStyle: TextStyle(fontSize: 20),
           suffixIcon: IconButton(
               icon: Icon(
                 Icons.remove_red_eye,
@@ -111,6 +113,7 @@ class _LoginState extends State<Login> {
               setState(() {
                 _loginStatus = '登录中...';
                 _showLoading = true;
+                promptWords = '';
               });
               loginService.login(_loginId, _password).then((onValue) {
                 if (onValue == OperationStatus.SUCCESSFUL){
@@ -125,6 +128,14 @@ class _LoginState extends State<Login> {
                   );
                   setState(() {
                     _showLoading = false;
+                  });
+                } else if(onValue == OperationStatus.FAILED){
+                  Future.delayed(Duration(seconds: 3),(){
+                    print('密码错误');
+                    setState(() {
+                      _showLoading = false;
+                      promptWords='ID/手机号码/邮箱或密码不正确';
+                    });
                   });
                 } else {
                   setState(() {
@@ -183,6 +194,11 @@ class _LoginState extends State<Login> {
             buildIdTextField(),
             SizedBox(height: 30.0),
             buildPasswordTextField(context),
+            SizedBox(height: 20.0),
+            new Text(promptWords,style: new TextStyle(
+              color: Colors.red,
+              fontSize: 20,
+            ),),
             SizedBox(height: 60.0),
             buildLoginButton(context),
             SizedBox(height: 20.0),

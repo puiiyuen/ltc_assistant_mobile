@@ -5,6 +5,7 @@ import 'package:ltc_assistant/utils/map_location.dart';
 import 'package:ltc_assistant/login/login.dart';
 import 'utils/session.dart';
 import 'utils/opertaion_status.dart';
+import 'utils/info_config.dart';
 
 import 'health_report/health_report.dart';
 import 'bill/bill.dart';
@@ -12,6 +13,7 @@ import 'memo/memo.dart';
 import 'suggestion/suggestion.dart';
 import 'profile/profile.dart';
 import 'sos/sos.dart';
+import 'notice/notice.dart';
 
 class Index extends StatefulWidget {
   @override
@@ -25,9 +27,23 @@ class _IndexState extends State<Index> {
 
   bool locationStart=false;
   SharedPreferences db;
+  bool isResident = true;
 
   Session session = new Session();
   MapLocation mapLocation = new MapLocation();
+
+  _IndexState(){
+    initDB();
+  }
+
+  void initDB()async{
+    db = await SharedPreferences.getInstance();
+    int userId = db.get('userId');
+    String userType = db.get('userType');
+    if (userId!= null && userType == 'RESFAMILY'){
+      isResident =false;
+    }
+  }
 
   PageView notice(){
     return new PageView(scrollDirection: Axis.horizontal, children: <Widget>[
@@ -49,6 +65,13 @@ class _IndexState extends State<Index> {
             ],
           ),
         ),
+        onTap: (){
+          Navigator.push(context,
+            new MaterialPageRoute(builder:
+                (context) => new Notice(InfoConfig.SERVER_ADDRESS
+                    +'/#/notices/1'))
+              );
+        },
       ),
       new GestureDetector(
         child: Container(
@@ -59,6 +82,13 @@ class _IndexState extends State<Index> {
                   fit: BoxFit.cover)
           ),
         ),
+        onTap: (){
+          Navigator.push(context,
+              new MaterialPageRoute(builder:
+                  (context) => new Notice(InfoConfig.SERVER_ADDRESS
+                  +'/#/notices/2'))
+          );
+        },
       ),
       new GestureDetector(
         child: Container(
@@ -69,11 +99,18 @@ class _IndexState extends State<Index> {
                   fit: BoxFit.cover)
           ),
         ),
+        onTap: (){
+          Navigator.push(context,
+              new MaterialPageRoute(builder:
+                  (context) => new Notice(InfoConfig.SERVER_ADDRESS
+                  +'/#/notices/3'))
+          );
+        },
       )
     ]);
   }
 
-  SliverPadding indexMenu(){
+  SliverPadding resIndexMenu(){
     return SliverPadding(
       padding: EdgeInsets.only(top: 20, left: 15, right: 15),
       sliver: SliverGrid.count(
@@ -370,6 +407,216 @@ class _IndexState extends State<Index> {
     );
   }
 
+  SliverPadding famIndexMenu(){
+    return SliverPadding(
+      padding: EdgeInsets.only(top: 20, left: 15, right: 15),
+      sliver: SliverGrid.count(
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+        crossAxisCount: 2,
+        childAspectRatio: 1,
+        children: <Widget>[
+          new GestureDetector(
+            child: new Container(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: new BorderRadius.vertical(
+                    top: Radius.elliptical(15, 15),
+                    bottom: Radius.elliptical(15, 15)
+                ),
+                // 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
+                boxShadow: [
+                  BoxShadow(color: Colors.grey,
+                      offset: Offset(3.0, 3.0),
+                      blurRadius: 10.0,
+                      spreadRadius: 2.0),
+                ],
+
+              ),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Icon(Icons.assignment,
+                    size: 100,
+                    color: Colors.white,),
+                  new Text("健康报告", style: new TextStyle(
+                      color: Colors.white,
+                      fontSize: 30
+                  ),)
+                ],
+              ),
+            ),
+            onTap: () async{
+              int onlineStatus;
+              int loginStatus=-1;
+              await session.isOnline().then((onValue){
+                onlineStatus = onValue;
+              });
+              if(onlineStatus == OperationStatus.IS_EXIST){
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => new HealthReport()));
+              } else if (onlineStatus == OperationStatus.NOT_EXIST) {
+                await Navigator.push(context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Login())).then((onValue){
+                  loginStatus = onValue;
+                });
+                if  (loginStatus == OperationStatus.SUCCESSFUL){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => new HealthReport()));
+                }
+              }
+            },
+          ),
+          new GestureDetector(
+            child: new Container(
+              decoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: new BorderRadius.vertical(
+                    top: Radius.elliptical(15, 15),
+                    bottom: Radius.elliptical(15, 15)
+                ),
+                boxShadow: [
+                  BoxShadow(color: Colors.grey,
+                      offset: Offset(3.0, 3.0),
+                      blurRadius: 10.0,
+                      spreadRadius: 2.0),
+                ],
+              ),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Icon(Icons.attach_money,
+                    size: 100, color: Colors.white,),
+                  new Text("个人账单", style: new TextStyle(
+                      color: Colors.white,
+                      fontSize: 30
+                  ),)
+                ],
+              ),
+            ),
+            onTap: () async{
+              int onlineStatus;
+              int loginStatus=-1;
+              await session.isOnline().then((onValue){
+                onlineStatus = onValue;
+              });
+              if(onlineStatus == OperationStatus.IS_EXIST){
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Bill()));
+              } else if (onlineStatus == OperationStatus.NOT_EXIST) {
+                await Navigator.push(context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Login())).then((onValue){
+                  loginStatus = onValue;
+                });
+                if  (loginStatus == OperationStatus.SUCCESSFUL){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => new Bill()));
+                }
+              }
+            },
+          ),
+          new GestureDetector(
+            child: new Container(
+              decoration: BoxDecoration(
+                color: Colors.cyan,
+                borderRadius: new BorderRadius.vertical(
+                    top: Radius.elliptical(15, 15),
+                    bottom: Radius.elliptical(15, 15)
+                ),
+                boxShadow: [
+                  BoxShadow(color: Colors.grey,
+                      offset: Offset(3.0, 3.0),
+                      blurRadius: 10.0,
+                      spreadRadius: 2.0),
+                ],
+              ),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Icon(Icons.sms,
+                    size: 100, color: Colors.white,),
+                  new Text("意见反馈", style: new TextStyle(
+                      color: Colors.white,
+                      fontSize: 30
+                  ),)
+                ],
+              ),
+            ),
+            onTap: () async{
+              int onlineStatus;
+              int loginStatus=-1;
+              await session.isOnline().then((onValue){
+                onlineStatus = onValue;
+              });
+              if(onlineStatus == OperationStatus.IS_EXIST){
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Suggestion()));
+              } else if (onlineStatus == OperationStatus.NOT_EXIST) {
+                await Navigator.push(context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Login())).then((onValue){
+                  loginStatus = onValue;
+                });
+                if  (loginStatus == OperationStatus.SUCCESSFUL){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => new Suggestion()));
+                }
+              }
+            },
+          ),
+          new GestureDetector(
+            child: new Container(
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: new BorderRadius.vertical(
+                    top: Radius.elliptical(15, 15),
+                    bottom: Radius.elliptical(15, 15)
+                ),
+                boxShadow: [
+                  BoxShadow(color: Colors.grey,
+                      offset: Offset(3.0, 3.0),
+                      blurRadius: 10.0,
+                      spreadRadius: 2.0),
+                ],
+              ),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Icon(
+                    Icons.person, size: 100, color: Colors.white,),
+                  new Text("个人中心", style: new TextStyle(
+                      color: Colors.white,
+                      fontSize: 30
+                  ),)
+                ],
+              ),
+            ),
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(
+                      builder: (context) => new Profile())
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -387,13 +634,13 @@ class _IndexState extends State<Index> {
                         ),)
                     ]),
                   ),
-                  indexMenu()
+                  isResident?resIndexMenu():famIndexMenu()
                 ],
               ),
               onHorizontalDragCancel: (){
                 if (!locationStart){
                   locationStart = true;
-                  mapLocation.locationReport();
+//                  mapLocation.locationReport();
                 }
               },
             )
