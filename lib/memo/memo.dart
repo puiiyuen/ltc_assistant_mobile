@@ -141,7 +141,9 @@ class _MemoState extends State<Memo> {
             context: context,
             builder: (BuildContext context) => AddDrawer()).then((onValue){
             setState(() {
-              toDoList.insert(0,onValue);
+              if (onValue!=null){
+                toDoList.insert(0,onValue);
+              }
             });
         });
       },

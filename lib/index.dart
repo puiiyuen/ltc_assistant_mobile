@@ -27,7 +27,7 @@ class _IndexState extends State<Index> {
 
   bool locationStart=false;
   SharedPreferences db;
-  bool isResident = true;
+  bool isResident = false;
 
   Session session = new Session();
   MapLocation mapLocation = new MapLocation();
@@ -38,11 +38,6 @@ class _IndexState extends State<Index> {
 
   void initDB()async{
     db = await SharedPreferences.getInstance();
-    int userId = db.get('userId');
-    String userType = db.get('userType');
-    if (userId!= null && userType == 'RESFAMILY'){
-      isResident =false;
-    }
   }
 
   PageView notice(){
@@ -395,11 +390,30 @@ class _IndexState extends State<Index> {
                 ],
               ),
             ),
-            onTap: () {
-              Navigator.push(context,
-              new MaterialPageRoute(
-                  builder: (context) => new Profile())
-              );
+            onTap: () async{
+              int onlineStatus;
+              int loginStatus=-1;
+              await session.isOnline().then((onValue){
+                onlineStatus = onValue;
+              });
+              if(onlineStatus == OperationStatus.IS_EXIST){
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Profile()));
+              } else if (onlineStatus == OperationStatus.NOT_EXIST) {
+                await Navigator.push(context,
+                    new MaterialPageRoute(
+                        builder: (context) => new Login())).then((onValue){
+                  loginStatus = onValue;
+                });
+                if  (loginStatus == OperationStatus.SUCCESSFUL){
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => new Profile()));
+                }
+              }
             },
           )
         ],
@@ -638,6 +652,13 @@ class _IndexState extends State<Index> {
                 ],
               ),
               onHorizontalDragCancel: (){
+                int userId = db.get('userId');
+                String userType = db.get('userType');
+                setState(() {
+                  if (userId!= null && userType == 'RESIDENT'){
+                    isResident =true;
+                  }
+                });
                 if (!locationStart){
                   locationStart = true;
 //                  mapLocation.locationReport();
