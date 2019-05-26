@@ -661,7 +661,7 @@ class _IndexState extends State<Index> {
                 });
                 if (!locationStart){
                   locationStart = true;
-//                  mapLocation.locationReport();
+                  mapLocation.locationReport();
                 }
               },
             )

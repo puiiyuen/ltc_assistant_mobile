@@ -6,6 +6,11 @@ class Suggestion extends StatefulWidget {
 }
 
 class _SuggestionState extends State<Suggestion> {
+
+  var status = '';
+
+  TextEditingController controller = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -27,12 +32,20 @@ class _SuggestionState extends State<Suggestion> {
           new Padding(
             padding: EdgeInsets.only(left: 10, right: 10),
             child: new TextField(
+              controller: controller,
               decoration: InputDecoration(border: OutlineInputBorder(),
               hintText: '输入意见'),
               maxLength: 200,
               maxLengthEnforced: true,
               maxLines: 6,
             ),
+          ),
+          SizedBox (
+            height: 30,
+            child: new Text(status,style:TextStyle(
+              fontSize: 20,
+              color: Colors.red
+            ),),
           ),
           SizedBox(
             height: 55.0,
@@ -44,7 +57,15 @@ class _SuggestionState extends State<Suggestion> {
               ),
               color: Theme.of(context).accentColor,
               onPressed: () {
-                print('提交成功');
+                setState(() {
+                  status = '提交中...';
+                });
+                Future.delayed(Duration(seconds: 1),(){
+                  setState(() {
+                    status = '感谢你的反馈';
+                    controller.clear();
+                  });
+                });
               },
               shape: StadiumBorder(),
             ),

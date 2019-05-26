@@ -12,6 +12,20 @@ class Memo extends StatefulWidget{
 
 class _MemoState extends State<Memo> {
 
+
+  _MemoState(){
+    toDoList.clear();
+    finishedList.clear();
+    toDoList.add('今天晚上7点参加联欢晚会');
+    toDoList.add('下午和老麦一起去义诊活动');
+    toDoList.add('明天组织户外踏青，准备衣物');
+    finishedList.add('晚上在8号楼就餐');
+    finishedList.add('20号前归还图书');
+    finishedList.add('12号晚上电影会');
+    finishedList.add('下午约林嘉勇打麻将');
+    finishedList.add('测试事项');
+  }
+
   Padding buildTitle(title) {
     return Padding(
       padding: EdgeInsets.all(8.0),

@@ -15,18 +15,18 @@ class _HealthReportState extends State<HealthReport> {
       children: <Widget>[
         buildTitle('最新报告'),
         latestRecord(),
-        buildRecord('健康建议：少吃辛辣食物'),
+        buildRecord('健康建议：少吃辛辣食物',''),
         buildTitle('历史记录'),
         new Divider(color: Colors.black),
-        buildRecord('身高：170，体重：56'),
+        buildRecord('身高：170cm，体重：56kg...','记录日期：2019-05-15'),
         new Divider(color: Colors.black),
-        buildRecord('身高：170，体重：58'),
+        buildRecord('身高：170cm，体重：58kg...','记录日期：2019-05-05'),
         new Divider(color: Colors.black),
-        buildRecord('身高：171，体重：55'),
+        buildRecord('身高：171cm，体重：55kg...','记录日期：2019-05-03'),
         new Divider(color: Colors.black),
-        buildRecord('身高：170，体重：56'),
+        buildRecord('身高：170cm，体重：56kg...','记录日期：2019-05-01'),
         new Divider(color: Colors.black),
-        buildRecord('身高：171，体重：52'),
+        buildRecord('身高：171cm，体重：52kg...','记录日期：2019-04-14'),
 
       ],
     );
@@ -34,24 +34,25 @@ class _HealthReportState extends State<HealthReport> {
 
   }
 
-  GestureDetector buildRecord(record){
+  GestureDetector buildRecord(record,dateTime){
     return GestureDetector(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(2.0, 10.0, 2.0, 10.0),
-        child: Text(
+      child: ListTile(
+        title: Text(
           record,
           style: TextStyle(fontSize: 20.0),
         ),
+        subtitle: Text(dateTime,style: TextStyle(fontSize: 16),),
       ),
       onTap: (){
-        HealthRecord healthRecord = new HealthRecord('report12341', 170, 65, 72, 120, 75, 5, 5.2, 3.4, '无', '2019-05-21');
+        HealthRecord healthRecord = new HealthRecord('report12341', 170, 56, 72, 120, 75, 5, 5.2, 3.4, '无', '2019-05-21');
         Navigator.push(context,
-          new MaterialPageRoute(
-              builder: (context) => new HealthDetail(1,healthRecord))
+            new MaterialPageRoute(
+                builder: (context) => new HealthDetail(1,healthRecord))
         );
       },
     );
   }
+
 
   Padding buildTitle(title) {
     return Padding(

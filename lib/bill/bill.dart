@@ -13,14 +13,15 @@ class _BillState extends State<Bill>{
 
   BillService billService = new BillService();
 
-  GestureDetector buildRecord(record){
+  GestureDetector buildRecord(record,dateTime){
     return GestureDetector(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(2.0, 10.0, 2.0, 10.0),
-        child: Text(
+      child: ListTile(
+        leading: Icon(Icons.attach_money),
+        title: Text(
           record,
           style: TextStyle(fontSize: 20.0),
         ),
+        subtitle: Text(dateTime,style: TextStyle(fontSize: 16),),
       ),
     );
   }
@@ -54,15 +55,19 @@ class _BillState extends State<Bill>{
             new ListView(
               children: <Widget>[
                 SizedBox(height: 10,),
-                buildRecord('身高：170，体重：56'),
+                buildRecord('¥170 餐食费用','记录日期：2019-05-20'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：170，体重：58'),
+                buildRecord('¥2300 住宿费用','记录日期：2019-05-11'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：171，体重：55'),
+                buildRecord('¥170 餐食费用','记录日期：2019-05-10'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：170，体重：56'),
+                buildRecord('¥140 接送费用','记录日期：2019-05-08'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：171，体重：52'),
+                buildRecord('¥150 餐食费用','记录日期：2019-05-05'),
+                new Divider(color: Colors.black),
+                buildRecord('¥160 服务费用','记录日期：2019-05-05'),
+                new Divider(color: Colors.black),
+                buildRecord('¥20 日用品','记录日期：2019-05-05'),
                 new Divider(color: Colors.black),
 
               ],
@@ -70,15 +75,15 @@ class _BillState extends State<Bill>{
             new ListView(
               children: <Widget>[
                 SizedBox(height: 10,),
-                buildRecord('身高：170，体重：56'),
+                buildRecord('缴费¥150','缴费日期：2019-05-05'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：170，体重：58'),
+                buildRecord('缴费¥100','缴费日期：2019-05-15'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：171，体重：55'),
+                buildRecord('缴费¥1550','缴费日期：2019-05-16'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：170，体重：56'),
+                buildRecord('缴费¥130','缴费日期：2019-05-18'),
                 new Divider(color: Colors.black),
-                buildRecord('身高：171，体重：52'),
+                buildRecord('缴费¥130','缴费日期：2019-05-15'),
                 new Divider(color: Colors.black),
 
               ],

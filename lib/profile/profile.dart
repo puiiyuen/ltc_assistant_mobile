@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:async';
+
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+
+import '../utils/opertaion_status.dart';
+import '../utils/info_config.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -7,6 +17,25 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   var _profilePhoto = 'images/profile.jpg';
+
+  String path;
+  Directory appDocDir;
+  Dio dio = new Dio();
+  CookieJar cookieJar;
+  SharedPreferences db;
+
+  _ProfileState() {
+    this.getPath().then((onValue) {
+      path = onValue + '/cookies';
+      cookieJar = new PersistCookieJar(dir: path,ignoreExpires: true);
+      dio.interceptors.add(CookieManager(cookieJar));
+    });
+  }
+
+  Future<String> getPath() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    return appDocDir.path;
+  }
 
   Container headProfile() {
     return Container(
@@ -140,8 +169,13 @@ class _ProfileState extends State<Profile> {
             ),
             color: Colors.redAccent,
             shape: StadiumBorder(),
-            onPressed: () {
-              Navigator.of(context).pop();
+            onPressed: () async{
+              Response response;
+              response = await dio.get(InfoConfig.SERVER_ADDRESS+'/logout');
+              if (response.data == OperationStatus.SUCCESSFUL){
+                Navigator.of(context).pop();
+              }
+
             }
         ),
       ),
